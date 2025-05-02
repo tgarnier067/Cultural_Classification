@@ -9,7 +9,7 @@ Based on information extracted from the **Wikipedia and Wikidata pages** of the 
 
 ---
 
-### 🧾 Definition of Classes
+### Definition of Classes
 
 - **Cultural Agnostic Item**:  
   The item is commonly known/used worldwide and no culture claims it.
@@ -22,7 +22,7 @@ Based on information extracted from the **Wikipedia and Wikidata pages** of the 
 
 ---
 
-### 🧠 Models Developed
+### Models Developed
 
 Two models are developed:  
 - A **non-transformer** approach  
@@ -30,7 +30,7 @@ Two models are developed:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ### 1️⃣ Data Collection
 
