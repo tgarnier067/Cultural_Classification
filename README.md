@@ -1,137 +1,48 @@
-# MNLP Project 1  
-## A Wikidata Item Classification
+# 🧠 Wikidata Item Classification
 
-**Entity classification system** that can discriminate Wikidata items into three categories:  
-- **Cultural Agnostic**  
-- **Cultural Representative**  
-- **Cultural Exclusive**  
-Based on information extracted from the **Wikipedia and Wikidata pages** of the entity.
+**A machine learning system to classify Wikidata items** into culturally meaningful categories using features extracted from **Wikipedia and Wikidata**.
 
 ---
 
-### Definition of Classes
+## 🗂️ Categories Defined
 
-- **Cultural Agnostic Item**:  
-  The item is commonly known/used worldwide and no culture claims it.
+Each item is classified into **one of three cultural categories**:
 
-- **Cultural Representative Item**:  
-  The item originated in a culture and/or is claimed by a culture as their own, but other cultures know/use it or have similar items.
-
-- **Cultural Exclusive Item**:  
-  The item is known/used only in a specific culture and is claimed by that culture.
-
----
-
-### Models Developed
-
-Two models are developed:  
-- A **non-transformer** approach  
-- A **transformer-based** approach
+| Category | Description |
+|----------|-------------|
+| 🟢 **Cultural Agnostic** | The item is commonly known or used worldwide. No culture specifically claims it. |
+| 🟡 **Cultural Representative** | The item originates from or is claimed by a culture, but is also known/used across cultures or has similar counterparts. |
+| 🔴 **Cultural Exclusive** | The item is only known or used within a specific culture and is strongly identified with it. |
 
 ---
 
-## Project Structure
+## 🔍 Objective
 
-### 1️⃣ Data Collection
+This project aims to investigate cultural ownership and representation by automatically classifying Wikidata entities, based on features all inferred from Wikipedia and Wikidata.
 
-All notebooks starting with `01_` contain the code to extract features from **Wikipedia and Wikidata pages** for each item.
+---
+## 📄 Paper
 
-Input datasets : 
-- [MNLP 2025 HW1] train set [PUBLIC] - train_cleaned.tsv
-
-Output dataset : 
-- dev_df_country.json
-- dev_df_dates.json
-- dev_df_descr_analyse.json
-- dev_df_images.json
-- dev_df_lang.json
-- dev_with_text.json
-- devset_subclass_instances.json
-- train_df_country.json
-- train_df_dates.json
-- train_df_descr_analyse.json
-- train_df_images.json
-- train_df_lang.json
-- train_with_text.json
-- trainset_subclass_instances.json
+We encourage you to first read the paper we wrote as part of this project. You can find it in this GitHub repository under the filename `.pdf`
 
 ---
 
-### 2️⃣ Cleaning
+## 🧰 Models Overview
 
-Notebook: `02_Cleaning_dataset`  
-- Provides functions and examples to prepare the dataset for NON-TRANSFORMERS modeling.  
-- Tasks include: filling missing values, cleaning, dropping variables, converting a variable into dummy variables, correcting labels, etc.  
-- Every cleaning choice is **justified in the notebook** using the training set, then applied to the validation set.
+Two main approaches are implemented:
 
-Input dataset : 
-- dev_df_country.json
-- dev_df_dates.json
-- dev_df_descr_analyse.json
-- dev_df_images.json
-- dev_df_lang.json
-- dev_with_text.json
-- devset_subclass_instances.json
-- train_df_country.json
-- train_df_dates.json
-- train_df_descr_analyse.json
-- train_df_images.json
-- train_df_lang.json
-- train_with_text.json
-- trainset_subclass_instances.json
+### 1. **Non-Transformer Models**
 
-Output dataset :
-- dev_df_complete.json
-- train_df_complete.json
+A modular pipeline with three distinct models:
+- A **CNN model** for images found in Wikipedia pages
+- A **text-based model** using item descriptions
+- A **feature-based model** using structured Wikidata attributes
 
----
+These are later **combined into an ensemble model** for final prediction.
 
-### 3️⃣ Visualization
+### 2. **Transformer-Based Models**
 
-Notebook: `03_Visualization`  
-- Helps visualize the training and validation datasets.  
-- Demonstrates the usefulness of extracted features and highlights their contributions to classification.  
-- Includes:
-  - **Histograms** for each feature with class label distributions
-  - **Train vs Validation comparisons** to show dataset balance
-  - A **heatmap** of all features at the end
-
-Input dataset :
-- dev_df_complete.json
-- train_df_complete.json
-
----
-
-### 4️⃣ Modeling
-
-#### ➤ Non-Transformer Approach
-
-We build **three weak models**, where each output is later used as input for an ensemble model:
-
-- `04_Modeling_CNN`  
-  Trains a CNN on the images available on Wikipedia pages.  
-  Option to train on a dataset with missing images dropped or filled with blank placeholders. Input dataset : train_df_images.json and dev_df_images.json
-
-- `04_Modeling_description`  
-  Uses item descriptions. Applies embedding and various classification techniques.
-
-- `04_Modeling_features`  
-  Uses extracted Wikidata features with traditional machine learning models.
-
-All three weak models predict the item’s class.
-
-Then, in `04_Modeling_ensemble`, we:
-- Extract logits from each weak model’s output
-- Feed them into an **ensemble model** for final classification
-
-#### ➤ Transformer-Based Approach
-
-We apply different Transformer models to various text inputs:
-- Name
-- Description
-- First 1000 characters of the Wikipedia page
-
-Models used include:
+Applied directly to raw text (item name, description, Wikipedia extract), using:
 - **BERT**
 - **DistilBERT**
 - **RoBERTa**
@@ -140,13 +51,62 @@ Models used include:
 
 ---
 
-### 5️⃣ Prediction
+## 📁 Project Structure
 
-Notebook: `05_Predictions`  
-- Takes as input a dataset containing:
-  - Wikidata link
+### `01_*.ipynb` – **Data Collection**
+
+- Extracts relevant data from Wikidata and Wikipedia (text, images, features).
+- Raw data generation for each entity.
+
+---
+
+### `02_Cleaning_dataset.ipynb` – **Data Cleaning**
+
+- Prepares dataset for non-transformer modeling.
+- Covers missing value imputation, label correction, one-hot encoding, and more.
+- Every cleaning step is **justified using training/validation metrics**.
+
+---
+
+### `03_Visualization.ipynb` – **Exploratory Analysis**
+
+- Visual diagnostics of feature distributions and dataset balance.
+- Includes:
+  - Per-feature histograms with class overlays
+  - Train vs. validation comparisons
+  - Correlation heatmaps
+
+---
+
+### `04_Modeling_*` – **Model Training**
+
+#### 🧱 Non-Transformer Models
+
+- `04_Modeling_CNN`: Classifies based on item **images**
+- `04_Modeling_description`: Uses **textual descriptions**
+- `04_Modeling_features`: Leverages **Wikidata features**
+- `04_Modeling_ensemble`: Combines the three outputs into an **ensemble classifier**
+
+> CNN models handle missing images via either **blank placeholders** or **row exclusion**.
+
+#### 🤖 Transformer-Based Models
+
+- Fine-tunes popular transformer architectures on:
+  - Name
+  - Description
+  - Wikipedia snippet (first 1000 characters)
+
+---
+
+### `05_Predictions.ipynb` – **Prediction & Export**
+
+- Inputs a dataset with:
+  - Wikidata URL
   - Name
   - Description
   - Category
-  - Subcategory  
-- Outputs a CSV file with the **predicted labels**.
+  - Subcategory
+- Outputs a CSV with **predicted cultural classification**
+
+---
+
